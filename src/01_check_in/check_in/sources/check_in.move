@@ -1,4 +1,6 @@
 module check_in::check_in {
+    use std::ascii::{String, string};
+    use std::string;
     use std::vector;
     use sui::event;
     use sui::object;
@@ -16,24 +18,25 @@ module check_in::check_in {
 
     public struct FlagString has key {
         id: UID,
-        str: vector<u8>,
+        str: String,
         ture_num:u64
     }
 
     fun init(ctx: &mut TxContext) {
         let flag_str = FlagString {
             id: object::new(ctx),
-            str: b"LetsMoveCTF",
+            str: string(b"LetsMoveCTF") ,
             ture_num:0
         };
         share_object(flag_str);
     }
 
 
-    entry fun get_flag(string: vector<u8>, flag_str: &mut FlagString, rand: &Random, ctx: &mut TxContext) {
+    entry fun get_flag(string: String, flag_str: &mut FlagString, rand: &Random, ctx: &mut TxContext) {
         assert!(string == flag_str.str, ESTRING);
 
         flag_str.str = getRandomString(rand,ctx);
+
         flag_str.ture_num = flag_str.ture_num +1;
 
         event::emit(Flag {
@@ -43,18 +46,19 @@ module check_in::check_in {
     }
 
 
-    fun getRandomString(rand: &Random, ctx: &mut TxContext): vector<u8> {
+    fun getRandomString(rand: &Random, ctx: &mut TxContext): String{
         let mut gen = random::new_generator(rand, ctx);
 
         let mut str_len = random::generate_u8_in_range(&mut gen, 4, 30);
 
         let mut rand: vector<u8> = b"";
         while (str_len != 0) {
-            let rand_num = random::generate_u8_in_range(&mut gen, 48, 126);
+            let rand_num = random::generate_u8_in_range(&mut gen, 34, 126);
             vector::push_back(&mut rand, rand_num);
             str_len = str_len - 1;
         };
-        rand
+
+        string(rand)
     }
 }
 
