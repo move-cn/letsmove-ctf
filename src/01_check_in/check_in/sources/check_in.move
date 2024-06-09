@@ -16,13 +16,15 @@ module check_in::check_in {
 
     public struct FlagString has key {
         id: UID,
-        str: vector<u8>
+        str: vector<u8>,
+        ture_num:u64
     }
 
     fun init(ctx: &mut TxContext) {
         let flag_str = FlagString {
             id: object::new(ctx),
-            str: b"LetsMoveCTF"
+            str: b"LetsMoveCTF",
+            ture_num:0
         };
         share_object(flag_str);
     }
@@ -32,6 +34,7 @@ module check_in::check_in {
         assert!(string == flag_str.str, ESTRING);
 
         flag_str.str = getRandomString(rand,ctx);
+        flag_str.ture_num = flag_str.ture_num +1;
 
         event::emit(Flag {
             sender: tx_context::sender(ctx),
