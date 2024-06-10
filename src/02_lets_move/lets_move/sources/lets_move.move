@@ -48,10 +48,10 @@ module lets_move::lets_move {
 
         let hash: vector<u8> = hash::sha3_256(full_proof);
 
-        let mut prefix_sum = 0;
+        let mut prefix_sum: u32 = 0;
         let mut i: u64 = 0;
         while (i < challenge.difficulity) {
-            prefix_sum = prefix_sum + *vector::borrow(&hash, i);
+            prefix_sum = prefix_sum + (*vector::borrow(&hash, i) as u32);
             i = i + 1;
         };
 
