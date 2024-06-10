@@ -14,39 +14,49 @@ module check_in::check_in {
     public struct Flag has copy, drop {
         sender: address,
         flag: bool,
+        ture_num: u64,
+        github_id: String
     }
 
     public struct FlagString has key {
         id: UID,
         str: String,
-        ture_num:u64
+        ture_num: u64
     }
 
     fun init(ctx: &mut TxContext) {
         let flag_str = FlagString {
             id: object::new(ctx),
-            str: string(b"LetsMoveCTF") ,
-            ture_num:0
+            str: string(b"LetsMoveCTF"),
+            ture_num: 0
         };
         share_object(flag_str);
     }
 
 
-    entry fun get_flag(string: String, flag_str: &mut FlagString, rand: &Random, ctx: &mut TxContext) {
+    entry fun get_flag(
+        string: String,
+        github_id: String,
+        flag_str: &mut FlagString,
+        rand: &Random,
+        ctx: &mut TxContext
+    ) {
         assert!(string == flag_str.str, ESTRING);
 
-        flag_str.str = getRandomString(rand,ctx);
+        flag_str.str = getRandomString(rand, ctx);
 
-        flag_str.ture_num = flag_str.ture_num +1;
+        flag_str.ture_num = flag_str.ture_num + 1;
 
         event::emit(Flag {
             sender: tx_context::sender(ctx),
             flag: true,
+            ture_num: flag_str.ture_num,
+            github_id
         });
     }
 
 
-    fun getRandomString(rand: &Random, ctx: &mut TxContext): String{
+    fun getRandomString(rand: &Random, ctx: &mut TxContext): String {
         let mut gen = random::new_generator(rand, ctx);
 
         let mut str_len = random::generate_u8_in_range(&mut gen, 4, 30);

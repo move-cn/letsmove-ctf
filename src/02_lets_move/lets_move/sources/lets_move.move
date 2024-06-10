@@ -12,6 +12,8 @@ module lets_move::lets_move {
     public struct Flag has copy, drop {
         sender: address,
         flag: bool,
+        ture_num: u64,
+        github_id: String
     }
 
     public struct Challenge has key {
@@ -32,7 +34,13 @@ module lets_move::lets_move {
     }
 
 
-    entry fun get_flag(proof: vector<u8>, challenge: &mut Challenge, rand: &Random, ctx: &mut TxContext) {
+    entry fun get_flag(
+        proof: vector<u8>,
+        github_id: String,
+        challenge: &mut Challenge,
+        rand: &Random,
+        ctx: &mut TxContext
+    ) {
         let mut full_proof: vector<u8> = vector::empty<u8>();
         vector::append<u8>(&mut full_proof, proof);
         vector::append<u8>(&mut full_proof, tx_context::sender(ctx).to_bytes());
@@ -55,6 +63,8 @@ module lets_move::lets_move {
         event::emit(Flag {
             sender: tx_context::sender(ctx),
             flag: true,
+            ture_num: challenge.ture_num,
+            github_id
         });
     }
 
