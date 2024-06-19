@@ -1,6 +1,7 @@
 module check_in::check_in {
     use std::ascii::{String, string};
-    use std::string;
+    use std::bcs;
+    use std::hash::sha3_256;
     use std::vector;
     use sui::event;
     use sui::object;
@@ -35,13 +36,16 @@ module check_in::check_in {
 
 
     entry fun get_flag(
-        string: String,
+        flag: vector<u8>,
         github_id: String,
         flag_str: &mut FlagString,
         rand: &Random,
         ctx: &mut TxContext
     ) {
-        assert!(string == flag_str.str, ESTRING);
+        let mut bcs_flag = bcs::to_bytes(&flag_str.str);
+        vector::append<u8>(&mut bcs_flag, *github_id.as_bytes());
+
+        assert!(flag == sha3_256(bcs_flag), ESTRING);
 
         flag_str.str = getRandomString(rand, ctx);
 
